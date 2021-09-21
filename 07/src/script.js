@@ -8,8 +8,8 @@ const cursor = {
     y: 0
 }
 window.addEventListener('mousemove', (event) => {
-    cursor.x = event.clientX  / sizes.width - 0.5
-    cursor.y = - (event.clientY  / sizes.height - 0.5)
+    cursor.x = event.clientX / sizes.width - 0.5
+    cursor.y = -(event.clientY / sizes.height - 0.5)
 })
 
 console.log(OrbitControls)
@@ -20,11 +20,7 @@ console.log(OrbitControls)
 // Canvas
 const canvas = document.querySelector('canvas.webgl')
 
-// Sizes
-const sizes = {
-    width: 800,
-    height: 600
-}
+
 // Scene
 const scene = new THREE.Scene()
 // var loader = new THREE.TextureLoader();
@@ -39,8 +35,41 @@ const mesh = new THREE.Mesh(
 
 scene.add(mesh)
 
+// Sizes
+const sizes = {
+    width: window.innerWidth,
+    height: window.innerHeight
+}
+
+window.addEventListener('resize', () => {
+    // Update sizes
+    sizes.width = window.innerWidth
+    sizes.height = window.innerHeight
+
+    camera.aspect = sizes.width / sizes.height
+    camera.updateProjectionMatrix()
+})
+
+window.addEventListener('dblclick', () => {
+    const fullscreenElement = document.fullscreenElement || document.webkitFullscreenElement
+
+    if (!fullscreenElement) {
+        if (canvas.requestFullscreen) {
+            canvas.requestFullscreen()
+        } else if (canvas.webkitFullscreenElement) {
+            canvas.webkitFullscreenElement
+        }
+    } else {
+        if (document.exitFullscreen) {
+            document.exitFullscreen()
+        } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen()
+        }
+    }
+})
+
 // Camera
-const camera = new THREE.PerspectiveCamera(75 , sizes.width / sizes.height, 0.1, 100)
+const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
 // const aspectRation = sizes.width / sizes.height
 // const camera = new THREE.OrthographicCamera(
 //     -1 * aspectRation,
@@ -57,19 +86,20 @@ scene.add(camera)
 
 
 // Controls
-const controls = new OrbitControls(camera,  canvas)
+const controls = new OrbitControls(camera, canvas)
 
 // Renderer
 const renderer = new THREE.WebGLRenderer({
     canvas: canvas
 })
-renderer.setSize(sizes.width, sizes.height)
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 
 // Animate
 const clock = new THREE.Clock()
 
 const tick = () => {
     const elapsedTime = clock.getElapsedTime()
+    renderer.setSize(sizes.width, sizes.height)
 
     // Update objects
     // mesh.rotation.y = elapsedTime;
@@ -79,6 +109,7 @@ const tick = () => {
     // camera.position.x = Math.sin(cursor.x * Math.PI * 2) * 3
     // camera.position.z = Math.cos(cursor.x * Math.PI * 2 ) * 3
     // camera.position.y = cursor.y * 5
+
     // camera.lookAt(mesh.position)
 
     // Render
