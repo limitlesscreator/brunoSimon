@@ -1,18 +1,19 @@
 import './style.css'
 import * as THREE from 'three'
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
+import * as dat from 'dat.gui'
+
+
+// Debug
+const gui = new dat.GUI({width: 400} )
+
+
 
 // Cursor
 const cursor = {
     x: 0,
     y: 0
 }
-window.addEventListener('mousemove', (event) => {
-    cursor.x = event.clientX / sizes.width - 0.5
-    cursor.y = -(event.clientY / sizes.height - 0.5)
-})
-
-console.log(OrbitControls)
 
 /**
  * Base
@@ -26,73 +27,54 @@ const scene = new THREE.Scene()
 // var loader = new THREE.TextureLoader();
 
 
-// Object
-// const mesh = new THREE.Mesh(
-//     new THREE.BoxGeometry(1, 1, 1, 1,2,2),
-//     new THREE.MeshBasicMaterial({color: 0xff0000, wireframe: true}),
-// new THREE.MeshBasicMaterial({
-//     map: loader.load('https://s3.amazonaws.com/duhaime/blog/tsne-webgl/assets/cat.jpg')
-// })
-// )
-
-// const geometry = new THREE.Geometry()
-
-// for (let i = 0; i < 50; i++){
-//     for (let j = 0; j < 3; j++){
-//         geometry.vertices.push(new THREE.Vector3(
-//             (Math.random() - 0.5) * 4,
-//             (Math.random() - 0.5) * 4,
-//             (Math.random() - 0.5) * 4,
-//         ))
-//     }
-//     const verticesIndex = i * 3
-//     geometry.faces.push(new THREE.Face3(
-//         verticesIndex,
-//         verticesIndex + 1,
-//         verticesIndex + 2,
-//     ))
-// }
-
-// const vertex1 = new THREE.Vector3(0, 0, 0)
-// geometry.vertices.push(vertex1)
-// const vertex2 = new THREE.Vector3(0, 1, 0)
-// geometry.vertices.push(vertex2)
-// const vertex3 = new THREE.Vector3(1, 0, 0)
-// geometry.vertices.push(vertex3)
-//
-// const face = new THREE.Face3(0,1,2)
-// geometry.faces.push(face)
-
-
-// const geometry = new THREE.BufferGeometry()
-//
-// const positionsArray = new Float32Array([
-//     0,0,0,
-//     0,1,0,
-//     1,0,0
-// ])
-//
-// const positionsAttribute = new THREE.BufferAttribute(positionsArray,3)
 
 // geometry.setAttribute('position', positionsAttribute)
-const geometry = new THREE.BufferGeometry()
+const geometry = new THREE.BoxBufferGeometry(1, 1, 1, 2, 2, 2)
 
-const count = 50
-const positionsArray = new Float32Array(count * 3 * 3)
+// const count = 50
+// const positionsArray = new Float32Array(count * 3 * 3)
+//
+// for (let i = 0; i < count * 3 * 3; i++){
+//     positionsArray[i] = (Math.random() - 0.5) * 2
+// }
+//
+// const positionsAttribute = new THREE.BufferAttribute(positionsArray,3)
+// geometry.setAttribute('position', positionsAttribute)
 
-for (let i = 0; i < count * 3 * 3; i++){
-    positionsArray[i] = (Math.random() - 0.5) * 2
+const parameters = {
+    color: 0x77ff,
+    spinning: true,
+    spin: () => {
+        parameters.spinning = !parameters.spinning
+    }
 }
 
-const positionsAttribute = new THREE.BufferAttribute(positionsArray,3)
-geometry.setAttribute('position', positionsAttribute)
+
 
 const material = new THREE.MeshBasicMaterial({
-    color: 0xff0000,
+    color: parameters.color,
     wireframe: true
 })
 const mesh = new THREE.Mesh(geometry, material)
 scene.add(mesh)
+
+//Debug
+gui.add(mesh.position, 'y').min(-3).max(3).step(0.01).name('elevation y')
+gui.add(mesh.position, 'x').min(-3).max(3).step(0.01).name('elevation x ')
+gui.add(mesh.position, 'z').min(-3).max(3).step(0.01).name('elevation z')
+
+gui.add(mesh,'visible')
+gui.add(material,'wireframe')
+// gui.add(mesh.position,'y', - 3, 3,0.01)
+// gui.add(mesh.position,'x', - 3, 3,0.01)
+// gui.add(mesh.position,'z', - 3, 3,0.01)
+gui.addColor(parameters, 'color').onChange(( e) => {
+    material.color.set(e)
+})
+
+gui.add(parameters, 'spin')
+// gui.hide()
+gui.close()
 
 // Sizes
 const sizes = {
@@ -159,7 +141,9 @@ const clock = new THREE.Clock()
 const tick = () => {
     const elapsedTime = clock.getElapsedTime()
     renderer.setSize(sizes.width, sizes.height)
-
+    if (parameters.spinning){
+        mesh.rotation.y += 0.01
+    }
     // Update objects
     // mesh.rotation.y = elapsedTime;
     // camera.position.x = cursor.x * 3
