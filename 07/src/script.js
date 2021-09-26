@@ -2,11 +2,40 @@ import './style.css'
 import * as THREE from 'three'
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 import * as dat from 'dat.gui'
+import imageSource from '../static/color.jpg'
 
+// Textures
+const loadingManager = new THREE.LoadingManager()
+const textureLoader = new THREE.TextureLoader(loadingManager)
+loadingManager.onLoad = () => {
+    console.log('onLoaded')
+}
+loadingManager.onProgress = () => {
+    console.log('onProgress')
+}
+loadingManager.onError = () => {
+    console.log('Error')
+}
+const colorTexture = textureLoader.load('color.jpg')
+const alphaTexture = textureLoader.load('alpha.jpg')
+const heightTexture = textureLoader.load('height.jpg')
+const normalTexture = textureLoader.load('normal.jpg')
+const ambientOcclusionTexture = textureLoader.load('ambientOcclusion.jpg')
+const metalnessTexture = textureLoader.load('metalness.jpg')
+const roughnessTexture = textureLoader.load('roughness.jpg')
+
+
+// const image = new Image()
+// const texture = new THREE.Texture(image)
+//
+// image.onload = () => {
+// texture.needsUpdate = true
+// }
+
+// image.src = ' color.jpg'
 
 // Debug
 const gui = new dat.GUI({width: 400} )
-
 
 
 // Cursor
@@ -31,36 +60,26 @@ const scene = new THREE.Scene()
 // geometry.setAttribute('position', positionsAttribute)
 const geometry = new THREE.BoxBufferGeometry(1, 1, 1, 2, 2, 2)
 
-// const count = 50
-// const positionsArray = new Float32Array(count * 3 * 3)
-//
-// for (let i = 0; i < count * 3 * 3; i++){
-//     positionsArray[i] = (Math.random() - 0.5) * 2
-// }
-//
-// const positionsAttribute = new THREE.BufferAttribute(positionsArray,3)
-// geometry.setAttribute('position', positionsAttribute)
-
 const parameters = {
     color: 0x77ff,
-    spinning: true,
+    spinning: false,
     spin: () => {
         parameters.spinning = !parameters.spinning
     }
 }
 
 
-
 const material = new THREE.MeshBasicMaterial({
-    color: parameters.color,
-    wireframe: true
+    map: colorTexture,
+    // color: parameters.color,
+    wireframe: false
 })
 const mesh = new THREE.Mesh(geometry, material)
 scene.add(mesh)
 
 //Debug
 gui.add(mesh.position, 'y').min(-3).max(3).step(0.01).name('elevation y')
-gui.add(mesh.position, 'x').min(-3).max(3).step(0.01).name('elevation x ')
+gui.add(mesh.position, 'x').min(-3).max(3).step(0.01).name('elevation x')
 gui.add(mesh.position, 'z').min(-3).max(3).step(0.01).name('elevation z')
 
 gui.add(mesh,'visible')
