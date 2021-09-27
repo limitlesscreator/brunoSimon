@@ -16,7 +16,8 @@ loadingManager.onProgress = () => {
 loadingManager.onError = () => {
     console.log('Error')
 }
-const colorTexture = textureLoader.load('color.jpg')
+const colorTexture = textureLoader.load('minecraft.png')
+// const colorTexture = textureLoader.load('checkerboard-1024x1024.png')
 const alphaTexture = textureLoader.load('alpha.jpg')
 const heightTexture = textureLoader.load('height.jpg')
 const normalTexture = textureLoader.load('normal.jpg')
@@ -24,6 +25,17 @@ const ambientOcclusionTexture = textureLoader.load('ambientOcclusion.jpg')
 const metalnessTexture = textureLoader.load('metalness.jpg')
 const roughnessTexture = textureLoader.load('roughness.jpg')
 
+// colorTexture.repeat.x = 2
+// colorTexture.repeat.y = 3
+// colorTexture.wrapS = THREE.RepeatWrapping
+// colorTexture.wrapT = THREE.RepeatWrapping
+//
+// colorTexture.offset.x = 0.5
+// colorTexture.offset.y = 0.5
+//
+// colorTexture.rotation = Math.PI / 4
+// colorTexture.minFilter = THREE.NearestFilter
+colorTexture.magFilter = THREE.NearestFilter
 
 // const image = new Image()
 // const texture = new THREE.Texture(image)
@@ -58,11 +70,16 @@ const scene = new THREE.Scene()
 
 
 // geometry.setAttribute('position', positionsAttribute)
+
 const geometry = new THREE.BoxBufferGeometry(1, 1, 1, 2, 2, 2)
+console.log(geometry.attributes.uv)
+// const geometry = new THREE.SphereBufferGeometry(1, 32, 32, )
+// const geometry = new THREE.ConeBufferGeometry(1, 1, 4, )
+// const geometry = new THREE.TorusBufferGeometry(1, 0.35, 32,100)
 
 const parameters = {
-    color: 0x77ff,
-    spinning: false,
+    color: 0xffffff,
+    spinning: true,
     spin: () => {
         parameters.spinning = !parameters.spinning
     }
@@ -162,6 +179,7 @@ const tick = () => {
     renderer.setSize(sizes.width, sizes.height)
     if (parameters.spinning){
         mesh.rotation.y += 0.01
+        mesh.rotation.x += 0.015
     }
     // Update objects
     // mesh.rotation.y = elapsedTime;
