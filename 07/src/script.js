@@ -79,7 +79,7 @@ console.log(geometry.attributes.uv)
 
 const parameters = {
     color: 0xffffff,
-    spinning: true,
+    spinning: false,
     spin: () => {
         parameters.spinning = !parameters.spinning
     }
