@@ -3,8 +3,6 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import * as dat from 'dat.gui'
 
-const b = `be rich`
-const a = `I'll ${b} :)`
 /**
  * Base
  */
@@ -36,6 +34,15 @@ const walls = new THREE.Mesh(
 walls.position.y = 1.25
 house.add(walls)
 
+//Roof
+const roof = new THREE.Mesh(
+    new THREE.ConeBufferGeometry(3.5, 1 ,4),
+    new THREE.MeshStandardMaterial({color: '#b35f45'})
+)
+roof.position.y = 2.5 + 0.5
+roof.rotation.y = Math.PI / 4
+house.add(roof)
+
 // Floor
 const floor = new THREE.Mesh(
     new THREE.PlaneBufferGeometry(20, 20),
@@ -45,6 +52,52 @@ floor.rotation.x = - Math.PI * 0.5
 floor.position.y = 0
 scene.add(floor)
 
+//Door:)
+const door = new THREE.Mesh(
+    new THREE.PlaneBufferGeometry(2,2),
+    new THREE.MeshStandardMaterial({color: '#aa7b7b'})
+)
+door.material.side = THREE.DoubleSide
+door.position.z = 2.001
+door.position.y = 1
+scene.add(door)
+
+//Bushes
+const bushGeometry = new THREE.SphereBufferGeometry(1 ,16 ,16)
+const bushMaterial = new THREE.MeshStandardMaterial({color: '#89c854'})
+
+const bush1 = new THREE.Mesh(bushGeometry, bushMaterial)
+bush1.scale.set(0.5, 0.5, 0.5)
+bush1.position.set(0.8, 0.2, 2.2)
+
+const bush2 = new THREE.Mesh(bushGeometry, bushMaterial)
+bush2.scale.set(0.25, 0.25, 0.25)
+bush2.position.set(1.4, 0.1, 2.1)
+
+const bush3 = new THREE.Mesh(bushGeometry, bushMaterial)
+bush3.scale.set(0.4, 0.4, 0.4)
+bush3.position.set(-0.8, 0.1, 2.2)
+
+const bush4 = new THREE.Mesh(bushGeometry, bushMaterial)
+bush4.scale.set(0.15, 0.15, 0.15)
+bush4.position.set(-1, 0.05, 2.6)
+
+function threeMesh (){
+    const bushGeometry2 = new THREE.SphereBufferGeometry(1 ,16 ,16)
+    const bushMaterial2 = new THREE.MeshStandardMaterial({color: '#89c854'})
+
+    for (let i = 0; i < 15; i++){
+        const tempBush = new THREE.Mesh(bushGeometry2, bushMaterial2)
+        const randomScale = Math.floor(Math.random() * (0.5 - 0.3) ) + 0.3
+        tempBush.scale.set(randomScale,randomScale,randomScale)
+        tempBush.position.set(Math.floor(Math.random() * (10 - -10) ) + -10,0, Math.floor(Math.random() * (10 - -10) ) + -10)
+        scene.add(tempBush)
+    }
+}
+threeMesh()
+
+
+scene.add(bush1,bush2,bush3,bush4)
 
 const ambientLight = new THREE.AmbientLight('#ffffff', 0.5)
 gui.add(ambientLight, 'intensity').min(0).max(1).step(0.001)
